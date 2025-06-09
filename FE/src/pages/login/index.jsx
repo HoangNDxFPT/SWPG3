@@ -78,7 +78,7 @@ function LoginPage() {
         >
           <Form.Item
             label={<span className="font-semibold text-gray-700">Tên đăng nhập</span>}
-            name="username"
+            name="userName"
             rules={[{ required: true, message: 'Vui lòng nhập tên người dùng!' }]}
           >
             <Input

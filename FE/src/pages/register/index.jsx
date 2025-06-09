@@ -43,7 +43,7 @@ function RegisterPage() {
         >
           <Form.Item
             label="Tên đăng nhập"
-            name="username"
+            name="userName"
             rules={[
               { required: true, message: 'Vui lòng nhập tên đăng nhập!' },
               { min: 4, max: 20, message: 'Tên đăng nhập từ 4 đến 20 ký tự!' },
