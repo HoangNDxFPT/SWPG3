@@ -42,7 +42,9 @@ public class Filter extends OncePerRequestFilter {
             "GET:/v3/api-docs/**",
             "GET:/swagger-ui/**",
             "GET:/swagger-ui.html"
+
 //            "GET:/api/profile/{id}"
+
             // Nếu có GET public, thêm vào đây, ví dụ: "GET:/api/public-resource"
     );
 

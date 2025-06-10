@@ -6,9 +6,18 @@ import { store, persistor } from './redux/store';
 import HomePage from './member/page/HomePage';
 import LoginPage from './pages/login';
 import RegisterPage from './pages/register';
+import UserProfilePage from './member/page/UserProfilePage';
+import AdminLayout from './admin/AdminLayout';
+import AdminProfilePage from './admin/page/AdminProfilePage'; 
+import UserManage from './admin/page/UserManage';
+import CourseManage from './admin/page/CourseManage';
+
 function RequireAdmin({ children }) {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
-  if (!user || user.role_id !== 1) return <LoginPage />;
+  // Kiểm tra cả role là chuỗi "ADMIN" hoặc role_id là 1
+  if (!user || !(user.role === "ADMIN" || user.role_id === 1)) {
+    return <LoginPage />;
+  }
   return children;
 }
 
@@ -26,11 +35,22 @@ const router = createBrowserRouter([
     element: <RegisterPage />,
   },
   {
-    path: "/register",
-    element: <profile />,
+    path: "/profile",
+    element: <UserProfilePage />,
   },
-
-
+  {
+    path: "/admin",
+    element: (
+      <RequireAdmin>
+        <AdminLayout />
+      </RequireAdmin>
+    ),
+    children: [
+      { path: "profile", element: <AdminProfilePage /> },
+      { path: "users", element: <UserManage /> },
+      { path: "courses", element: <CourseManage /> },
+    ],
+  },
 ]);
 
 function App() {
