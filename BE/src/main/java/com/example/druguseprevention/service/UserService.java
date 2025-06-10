@@ -18,10 +18,11 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+
     public User getCurrentUser() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByUserName(userName) // Sửa: findByUserName
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + userName));
     }
 
     public ProfileDTO getProfileById(Long id) {
@@ -53,7 +54,16 @@ public class UserService {
     }
 
     public ProfileDTO getProfile() {
-        return null;
+        User user = getCurrentUser();
+
+        ProfileDTO dto = new ProfileDTO();
+        dto.setFullName(user.getFullName());
+        dto.setPhoneNumber(user.getPhoneNumber());
+        dto.setAddress(user.getAddress());
+        dto.setDateOfBirth(user.getDateOfBirth() != null ? user.getDateOfBirth().toString() : null);
+        dto.setGender(user.getGender() != null ? user.getGender().toString() : null);
+
+        return dto;
     }
 }
 
