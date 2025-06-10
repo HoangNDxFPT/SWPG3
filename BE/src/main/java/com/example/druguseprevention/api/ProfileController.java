@@ -15,6 +15,7 @@ public class ProfileController {
         this.userService = userService;
     }
 
+    @SecurityRequirement(name = "api")
     @GetMapping
     public ResponseEntity<ProfileDTO> getProfile() {
         return ResponseEntity.ok(userService.getProfile());
@@ -27,6 +28,7 @@ public class ProfileController {
         return ResponseEntity.ok("Updated");
     }
 
+    @SecurityRequirement(name = "api")
     @GetMapping("/{id}")
     public ResponseEntity<ProfileDTO> getProfileById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getProfileById(id));
