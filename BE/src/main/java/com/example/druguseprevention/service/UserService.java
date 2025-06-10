@@ -56,7 +56,17 @@ public class UserService {
     }
 
     public ProfileDTO getProfile() {
-        return null;
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUserName(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        ProfileDTO dto = new ProfileDTO();
+        dto.setFullName(user.getFullName());
+        dto.setPhoneNumber(user.getPhoneNumber());
+        dto.setAddress(user.getAddress());
+        dto.setDateOfBirth(user.getDateOfBirth());
+        dto.setGender(user.getGender());
+        return dto;
     }
 }
 
