@@ -6,6 +6,7 @@ import { store, persistor } from './redux/store';
 import HomePage from './member/page/HomePage';
 import LoginPage from './pages/login';
 import RegisterPage from './pages/register';
+import UserProfilePage from './member/page/UserProfilePage';
 function RequireAdmin({ children }) {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   if (!user || user.role_id !== 1) return <LoginPage />;
@@ -26,8 +27,10 @@ const router = createBrowserRouter([
     element: <RegisterPage />,
   },
   {
-    path: "/register",
-    element: <profile />,
+
+    path: "/profile",
+    element: <UserProfilePage />,
+
   },
 
 

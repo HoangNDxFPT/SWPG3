@@ -19,11 +19,12 @@ public class ProfileController {
         return ResponseEntity.ok(userService.getProfile());
     }
 
-    @PutMapping
+    @PatchMapping
     public ResponseEntity<?> updateProfile(@RequestBody ProfileDTO dto) {
         userService.updateProfile(dto);
         return ResponseEntity.ok("Updated");
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<ProfileDTO> getProfileById(@PathVariable Long id) {
