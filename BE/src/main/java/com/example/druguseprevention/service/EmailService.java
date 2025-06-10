@@ -44,4 +44,21 @@ public class EmailService {
         }
 
     }
+
+    public void sendHtmlEmail(EmailDetail emailDetail, String htmlContent) {
+        try {
+            // Creating a simple mail message
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+            // Setting up necessary details
+            mimeMessageHelper.setTo(emailDetail.getRecipient());
+            mimeMessageHelper.setSubject(emailDetail.getSubject());
+            mimeMessageHelper.setText(htmlContent, true);
+            mimeMessageHelper.setFrom("admin@gmail.com");
+            javaMailSender.send(mimeMessage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

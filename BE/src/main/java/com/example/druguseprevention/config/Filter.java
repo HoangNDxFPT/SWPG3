@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
@@ -38,7 +39,9 @@ public class Filter extends OncePerRequestFilter {
 
     private final List<String> PUBLIC_API = List.of(
             "POST:/api/register",
-            "POST:/api/login"
+            "POST:/api/login",
+            "POST:/api/forgot-password",
+            "POST:/api/reset-password"
     );
 
     public boolean isPublicAPI(String uri, String method) {

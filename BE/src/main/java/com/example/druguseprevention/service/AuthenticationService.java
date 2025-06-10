@@ -1,9 +1,6 @@
 package com.example.druguseprevention.service;
 
-import com.example.druguseprevention.dto.EmailDetail;
-import com.example.druguseprevention.dto.LoginRequest;
-import com.example.druguseprevention.dto.RegisterRequest;
-import com.example.druguseprevention.dto.UserResponse;
+import com.example.druguseprevention.dto.*;
 import com.example.druguseprevention.entity.User;
 import com.example.druguseprevention.enums.Role;
 import com.example.druguseprevention.exception.AuthenticationException;
@@ -12,11 +9,14 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 @Service
 public class AuthenticationService implements UserDetailsService {
@@ -38,6 +38,9 @@ public class AuthenticationService implements UserDetailsService {
 
     @Autowired
     EmailService emailService;
+
+    @Autowired
+    TemplateEngine templateEngine;
 
     public User register (RegisterRequest registerRequest){
         User user = new User();
@@ -75,6 +78,49 @@ public class AuthenticationService implements UserDetailsService {
         userResponse.setToken(token);
         return userResponse ;
     }
+
+    public void changePassword(ChangePasswordRequest request){
+        //Dùng để lấy thông tin người dùng hiện tại đang đăng nhập
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(!passwordEncoder.matches(request.getOldPassword(), user.getPassword())){
+            throw new AuthenticationException("Old password is incorrect.");
+        }
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        authenticationRepository.save(user);
+    }
+
+    public void forgotPassword (ForgotPasswordRequest request){
+        User user = authenticationRepository.findUserByEmail(request.getEmail());
+        if (user == null) {
+            throw new AuthenticationException("User not found with this email.");
+        }
+
+        String token = tokenService.generateToken(user);
+        EmailDetail detail = new EmailDetail();
+        detail.setRecipient(user.getEmail());
+        detail.setSubject("Reset your password");
+
+        Context context = new Context();
+        context.setVariable("name", user.getFullName());
+        context.setVariable("button", "Reset Password");
+        context.setVariable("link", "http://your-frontend/reset-password?token=" + token); // đường link frontend
+
+        String html = templateEngine.process("resetpasswordtemplate", context);
+        emailService.sendHtmlEmail(detail, html);
+
+    }
+
+    public void resetPassword(ResetPasswordRequest request) {
+        User user;
+        try {
+            user = tokenService.extractAccount(request.getToken());
+        } catch (Exception e) {
+            throw new AuthenticationException("Invalid or expired token.");
+        }
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        authenticationRepository.save(user);
+    }
+
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
