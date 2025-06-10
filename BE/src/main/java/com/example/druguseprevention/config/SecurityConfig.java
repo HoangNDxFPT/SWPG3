@@ -66,6 +66,8 @@ public class SecurityConfig {
                         req -> req
                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                 .requestMatchers("/api/login", "/api/register").permitAll()
+                                // Add Swagger 3 endpoints to permitAll()
+                                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .userDetailsService(authenticationService)

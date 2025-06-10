@@ -7,6 +7,9 @@ import HomePage from './member/page/HomePage';
 import LoginPage from './pages/login';
 import RegisterPage from './pages/register';
 import UserProfilePage from './member/page/UserProfilePage';
+import Servey from './member/page/Servey';
+import CouresListPage from './member/page/CouresListPage';
+import ConsultantList from './member/page/ConsultantList';
 function RequireAdmin({ children }) {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   if (!user || user.role_id !== 1) return <LoginPage />;
@@ -27,12 +30,22 @@ const router = createBrowserRouter([
     element: <RegisterPage />,
   },
   {
-
     path: "/profile",
     element: <UserProfilePage />,
-
+  },
+  {
+    path: "/servey",
+    element: <Servey />,
+  },
+  {
+    path: "/courseList",
+    element: <CouresListPage />,
   },
 
+ {
+    path: "/consultantList",
+    element: <ConsultantList />,
+  },
 
 ]);
 

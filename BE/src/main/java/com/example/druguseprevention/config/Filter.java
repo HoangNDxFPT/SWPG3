@@ -33,9 +33,16 @@ public class Filter extends OncePerRequestFilter {
     @Autowired
     TokenService tokenService;
 
+    // Chỉ các API này mới là public, các API khác đều cần xác thực
     private final List<String> PUBLIC_API = List.of(
             "POST:/api/register",
-            "POST:/api/login"
+            "POST:/api/login",
+            "POST:/api/forgot-password",
+            "POST:/api/reset-password",
+            "GET:/v3/api-docs/**",
+            "GET:/swagger-ui/**",
+            "GET:/swagger-ui.html"
+            // Nếu có GET public, thêm vào đây, ví dụ: "GET:/api/public-resource"
     );
 
     public boolean isPublicAPI(String uri, String method) {
@@ -51,9 +58,7 @@ public class Filter extends OncePerRequestFilter {
 
     public String getToken(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return null;
-        }
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) return null;
         return authHeader.substring(7);
     }
 
@@ -66,6 +71,7 @@ public class Filter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } else {
             String token = getToken(request);
+
             if (token == null) {
                 resolver.resolveException(request, response, null, new AuthenticationException("Empty token!") {});
                 return;
@@ -74,18 +80,19 @@ public class Filter extends OncePerRequestFilter {
             User user;
             try {
                 user = tokenService.extractAccount(token);
-            } catch (ExpiredJwtException e) {
+            } catch (ExpiredJwtException expiredJwtException) {
                 resolver.resolveException(request, response, null, new AuthException("Expired Token!"));
                 return;
-            } catch (MalformedJwtException e) {
+            } catch (MalformedJwtException malformedJwtException) {
                 resolver.resolveException(request, response, null, new AuthException("Invalid Token!"));
                 return;
             }
 
             UsernamePasswordAuthenticationToken authenToken =
-                    new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                    new UsernamePasswordAuthenticationToken(user, token, user.getAuthorities());
             authenToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenToken);
+
             filterChain.doFilter(request, response);
         }
     }
