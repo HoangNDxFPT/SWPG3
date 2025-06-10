@@ -120,7 +120,7 @@ function Header() {
       <div className="flex gap-2 items-center">
         {display_name ? (
           <>
-            <a href='/userProfile'>
+            <a href='/profile'>
               <span className="font-semibold text-gray-700">Hello, {display_name}</span>
             </a>
             <button
