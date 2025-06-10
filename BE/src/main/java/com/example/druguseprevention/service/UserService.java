@@ -3,7 +3,9 @@ package com.example.druguseprevention.service;
 import com.example.druguseprevention.dto.ProfileDTO;
 import com.example.druguseprevention.entity.User;
 import com.example.druguseprevention.enums.Gender;
+import com.example.druguseprevention.repository.AuthenticationRepository;
 import com.example.druguseprevention.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +21,8 @@ public class UserService {
     }
 
     public User getCurrentUser() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByEmail(email)
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByUserName(userName)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
@@ -32,8 +34,8 @@ public class UserService {
         dto.setFullName(user.getFullName());
         dto.setPhoneNumber(user.getPhoneNumber());
         dto.setAddress(user.getAddress());
-        dto.setDateOfBirth(user.getDateOfBirth() != null ? user.getDateOfBirth().toString() : null);
-        dto.setGender(user.getGender() != null ? user.getGender().toString() : null);
+        dto.setDateOfBirth(user.getDateOfBirth());
+        dto.setGender(user.getGender());
         return dto;
     }
 
@@ -44,10 +46,11 @@ public class UserService {
         user.setPhoneNumber(dto.getPhoneNumber());
         user.setAddress(dto.getAddress());
         if (dto.getDateOfBirth() != null) {
-            user.setDateOfBirth(LocalDate.parse(dto.getDateOfBirth()));
+            user.setDateOfBirth(dto.getDateOfBirth());
         }
+
         if (dto.getGender() != null) {
-            user.setGender(Gender.valueOf(dto.getGender()));
+            user.setGender(dto.getGender());
         }
         userRepository.save(user);
     }

@@ -2,6 +2,7 @@ package com.example.druguseprevention.api;
 
 import com.example.druguseprevention.dto.ProfileDTO;
 import com.example.druguseprevention.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 @RestController
@@ -19,6 +20,7 @@ public class ProfileController {
         return ResponseEntity.ok(userService.getProfile());
     }
 
+    @SecurityRequirement(name = "api")
     @PutMapping
     public ResponseEntity<?> updateProfile(@RequestBody ProfileDTO dto) {
         userService.updateProfile(dto);
