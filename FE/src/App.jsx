@@ -8,7 +8,9 @@ import LoginPage from './pages/login';
 import RegisterPage from './pages/register';
 import UserProfilePage from './member/page/UserProfilePage';
 import AdminLayout from './admin/AdminLayout';
-import AdminProfilePage from './admin/page/AdminProfilePage'; // Đảm bảo bạn có file này
+import AdminProfilePage from './admin/page/AdminProfilePage'; 
+import UserManage from './admin/page/UserManage';
+import CourseManage from './admin/page/CourseManage';
 
 function RequireAdmin({ children }) {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -45,7 +47,8 @@ const router = createBrowserRouter([
     ),
     children: [
       { path: "profile", element: <AdminProfilePage /> },
-      
+      { path: "users", element: <UserManage /> },
+      { path: "courses", element: <CourseManage /> },
     ],
   },
 ]);
